@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Create a draggable point</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js"></script>
+<link
+rel="stylesheet"
+href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css"
+type="text/css"
+/>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<style>
+.coordinates {
+background: rgba(0, 0, 0, 0.5);
+color: #fff;
+position: absolute;
+bottom: 40px;
+left: 10px;
+padding: 5px 10px;
+margin: 0;
+font-size: 11px;
+line-height: 18px;
+border-radius: 3px;
+display: none;
+}
+</style>
+ 
+<div id="map" style='width: 800px; height: 400px; margin: 0 auto;'></div>
+<pre id="coordinates" class="coordinates"></pre>
+ 
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZWxzYXNoIiwiYSI6ImNsM2syaHUxYjBmZDczY283cnU5d29uODIifQ.AZFaxwOY8eMiciqqIgAkjw';
+    const coordinates = document.getElementById('coordinates');
+    const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: [-0.102, 51.509], // Starting position [lng, lat]
+    zoom: 9 // Starting zoom level    
+    }); 
+
+    const geocoder = new MapboxGeocoder({
+        // Initialize the geocoder
+        accessToken: mapboxgl.accessToken, // Set the access token
+        mapboxgl: mapboxgl, // Set the mapbox-gl instance
+        marker: false, // Do not use the default marker style
+        placeholder: 'Search for places in Berkeley', // Placeholder text for the search bar
+        bbox: [-122.30937, 37.84214, -122.23715, 37.89838], // Boundary for Berkeley
+        proximity: {
+          longitude: -122.25948,
+          latitude: 37.87221
+        } // Coordinates of UC Berkeley
+      });
+
+    // Add the geocoder to the map
+    map.addControl(geocoder);
+    
+    const canvas = map.getCanvasContainer();
+    
+    const geojson = {
+    'type': 'FeatureCollection',
+    'features': [
+    {
+    'type': 'Feature',
+    'geometry': {
+    'type': 'Point',
+    'coordinates': [-0.102, 51.509]
+    }
+    }
+    ]
+    };
+    
+    function onMove(e) {
+        const coords = e.lngLat;
+        
+        // Set a UI indicator for dragging.
+        canvas.style.cursor = 'grabbing';
+        
+        // Update the Point feature in `geojson` coordinates
+        // and call setData to the source layer `point` on it.
+        geojson.features[0].geometry.coordinates = [coords.lng, coords.lat];
+        map.getSource('point').setData(geojson);
+    }
+    
+    function onUp(e) {
+        const coords = e.lngLat;
+        
+        // Print the coordinates of where the point had
+        // finished being dragged to on the map.
+        coordinates.style.display = 'block';
+        coordinates.innerHTML = `Longitude: ${coords.lng}<br />Latitude: ${coords.lat}`;
+        canvas.style.cursor = '';
+        
+        // Unbind mouse/touch events
+        map.off('mousemove', onMove);
+        map.off('touchmove', onMove);
+    }
+    
+    map.on('load', () => {
+            
+        // Add a single point to the map.
+        map.addSource('point', {
+            'type': 'geojson',
+            'data': geojson
+        });
+        
+        map.addLayer({
+            'id': 'point',
+            'type': 'circle',
+            'source': 'point',
+            'paint': {
+            'circle-radius': 10,
+            'circle-color': '#F84C4C' // red color
+            }
+        });
+        
+        // When the cursor enters a feature in
+        // the point layer, prepare for dragging.
+        map.on('mouseenter', 'point', () => {
+            map.setPaintProperty('point', 'circle-color', '#3bb2d0');
+            canvas.style.cursor = 'move';
+        });
+        
+        map.on('mouseleave', 'point', () => {
+            map.setPaintProperty('point', 'circle-color', '#3887be');
+            canvas.style.cursor = '';
+        });
+        
+        map.on('mousedown', 'point', (e) => {
+            // Prevent the default map drag behavior.
+            e.preventDefault();
+            
+            canvas.style.cursor = 'grab';
+            
+            map.on('mousemove', onMove);
+            map.once('mouseup', onUp);
+            map.once('touchend', printcoords);
+        });
+        
+        map.on('touchstart', 'point', (e) => {
+            if (e.points.length !== 1) return;
+            
+            // Prevent the default map drag behavior.
+            e.preventDefault();
+            
+            map.on('touchmove', onMove);
+            map.once('touchend', onUp);
+            map.once('touchend', printcoords);
+        });
+
+
+        // Listen for the `result` event from the Geocoder // `result` event is triggered when a user makes a selection
+        //  Add a marker at the result's coordinates
+        geocoder.on('result', (event) => {
+            map.getSource('point').setData(event.result.geometry);
+            map.setPaintProperty('point', 'circle-color', '#3887be');
+            console.log(event);
+            coordinates.style.display = 'block';
+            coordinates.innerHTML = `Longitude: ${event.result.geometry.coordinates[0]}<br />Latitude: ${event.result.geometry.coordinates[1]}`;
+        });
+    });
+
+</script>
+ 
+</body>
+</html>
