@@ -16,8 +16,7 @@ type="text/css"
 body {
     background-color: #8d8d8d;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
     margin: 0 auto;
     height: 100vh;
     }
@@ -39,34 +38,113 @@ line-height: 18px;
 border-radius: 3px;
 display: none;
 }
-.button {
+
+/* CSS */
+.button-85 {
+  padding: 0.6em 2em;
+  border: none;
+  outline: none;
+  color: rgb(255, 255, 255);
+  background: #111;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  margin-bottom: 20px;
+}
+
+.button-85:before {
+  content: "";
+  background: linear-gradient(
+    45deg,
+    #ff0000,
+    #ff7300,
+    #fffb00,
+    #48ff00,
+    #00ffd5,
+    #002bff,
+    #7a00ff,
+    #ff00c8,
+    #ff0000
+  );
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  -webkit-filter: blur(5px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  animation: glowing-button-85 20s linear infinite;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+@keyframes glowing-button-85 {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+.button-85:after {
+  z-index: -1;
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #222;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+#btn {
     border: none;
-    color: white;
-    position: relative;
-    padding: 15px 32px;
+    margin-bottom: 20px;
+    align-items: center;
     text-align: center;
     text-decoration: none;
-    display: inline;
-    font-size: 16px;
-    margin: 4px 2px;
+    padding: 5px;
+    border-radius: 20%;
+    font-size: 30px;
     cursor: pointer;
-  }
-</style>
- 
+}
+#navbar {
+    position: top;
+}
 
-<div id="map" style='width: 800px; height: 400px; margin: 50 auto;'></div>
+</style>
+
+<div id="navbar">
+    <h1>Please find your location and then click this button to copy the coordiantes to the clipboard</h1>
+    <button class="button-85" role="button" onclick="clipboardText()">Click here to copy coordinates to clipboard</button>
+</div>
+
+<div id="map" style='width: 100vw; height: 100vh; margin: 50 auto;'></div>
 <pre id="coordinates" class="coordinates"></pre>
-<button onclick="copyText()">Copy text</button>
 
 <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoiZWxzYXNoIiwiYSI6ImNsM2syaHUxYjBmZDczY283cnU5d29uODIifQ.AZFaxwOY8eMiciqqIgAkjw';
     const coordinates = document.getElementById('coordinates');
+    const text = document.getElementById('text');
     const map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v11',
-    center: [-0.102, 51.509], // Starting position [lng, lat]
-    zoom: 9 // Starting zoom level    
-    }); 
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-0.102, 51.509], // Starting position [lng, lat]
+        zoom: 9 // Starting zoom level    
+    });
 
     const geocoder = new MapboxGeocoder({
         // Initialize the geocoder
@@ -86,19 +164,35 @@ display: none;
     
     const canvas = map.getCanvasContainer();
     
-    const geojson = {
-    'type': 'FeatureCollection',
-    'features': [
-    {
-    'type': 'Feature',
-    'geometry': {
-    'type': 'Point',
-    'coordinates': [-0.102, 51.509]
-    }
-    }
-    ]
+    let geojson = {
+        'type': 'FeatureCollection',
+        'features': [
+            {
+            'type': 'Feature',
+                'geometry': {
+                'type': 'Point',
+                'coordinates': [-0.102, 51.509]
+                }
+            }
+        ]
     };
-    
+
+    function clipboardText() {
+        /* Get the text field */
+        var copyText1 = geojson.features[0].geometry.coordinates;
+        let copyText = copyText1.toString();
+      
+        /* Copy the text inside the text field */
+        let test = navigator.clipboard.writeText(copyText);
+        console.log(test);
+        setTimeout(async()=>(
+            await  
+            navigator.clipboard.writeText(copyText), 3000));
+        
+        /* Alert the copied text */
+        alert("Copied the text: " + copyText);
+    }
+
     function onMove(e) {
         const coords = e.lngLat;
         
@@ -163,7 +257,6 @@ display: none;
             
             map.on('mousemove', onMove);
             map.once('mouseup', onUp);
-            map.once('touchend', printcoords);
         });
         
         map.on('touchstart', 'point', (e) => {
@@ -174,7 +267,6 @@ display: none;
             
             map.on('touchmove', onMove);
             map.once('touchend', onUp);
-            map.once('touchend', printcoords);
         });
 
 
@@ -187,23 +279,6 @@ display: none;
             coordinates.style.display = 'block';
             coordinates.innerHTML = `Longitude: ${event.result.geometry.coordinates[0]}<br />Latitude: ${event.result.geometry.coordinates[1]}`;
         });
-
-        // Button to copy text (functionality)
-        function copyText() {
-            /* Get the text field */
-            var copyText = document.getElementById(coordinates);
-          
-            /* Select the text field */
-            copyText.select();
-            copyText.setSelectionRange(0, 99999); /* For mobile devices */
-          
-             /* Copy the text inside the text field */
-            navigator.clipboard.writeText(copyText.value);
-          
-            /* Alert the copied text */
-            alert("Copied the text: " + copyText.value);
-          }
-
     });
 
 </script>
