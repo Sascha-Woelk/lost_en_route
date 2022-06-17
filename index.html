@@ -13,8 +13,15 @@ href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapb
 type="text/css"
 />
 <style>
-body { margin: 0; padding: 0; }
-#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+body {
+    background-color: #8d8d8d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    height: 100vh;
+    }
+#map { position: relative; top: 0; bottom: 0; width: 100%;}
 </style>
 </head>
 <body>
@@ -32,11 +39,25 @@ line-height: 18px;
 border-radius: 3px;
 display: none;
 }
+.button {
+    border: none;
+    color: white;
+    position: relative;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+  }
 </style>
  
-<div id="map" style='margin: 0 auto;'></div>
+
+<div id="map" style='width: 800px; height: 400px; margin: 50 auto;'></div>
 <pre id="coordinates" class="coordinates"></pre>
- 
+<button onclick="copyText()">Copy text</button>
+
 <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoiZWxzYXNoIiwiYSI6ImNsM2syaHUxYjBmZDczY283cnU5d29uODIifQ.AZFaxwOY8eMiciqqIgAkjw';
     const coordinates = document.getElementById('coordinates');
@@ -166,6 +187,23 @@ display: none;
             coordinates.style.display = 'block';
             coordinates.innerHTML = `Longitude: ${event.result.geometry.coordinates[0]}<br />Latitude: ${event.result.geometry.coordinates[1]}`;
         });
+
+        // Button to copy text (functionality)
+        function copyText() {
+            /* Get the text field */
+            var copyText = document.getElementById(coordinates);
+          
+            /* Select the text field */
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); /* For mobile devices */
+          
+             /* Copy the text inside the text field */
+            navigator.clipboard.writeText(copyText.value);
+          
+            /* Alert the copied text */
+            alert("Copied the text: " + copyText.value);
+          }
+
     });
 
 </script>
