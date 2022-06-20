@@ -44,52 +44,42 @@ type="text/css"
     display: none;
     }
 
-    /* CSS */
-    .button-68 {
-      appearance: none;
-      backface-visibility: hidden;
-      background-color: #27ae60;
-      border-radius: 8px;
-      border-style: none;
-      box-shadow: rgba(39, 174, 96, .15) 0 4px 9px;
+    .button-66 {
+      background-color: #0a6bff;
+      border-radius: 4px;
+      border: 0;
+      box-shadow: rgba(1,60,136,.5) 0 -1px 3px 0 inset,rgba(0,44,97,.1) 0 3px 6px 0;
       box-sizing: border-box;
       color: #fff;
       cursor: pointer;
-      display: inline-block;
-      font-family: Inter,-apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: normal;
-      line-height: 1.5;
-      outline: none;
-      overflow: hidden;
-      padding: 13px 20px;
+      display: inherit;
+      font-family: "Space Grotesk",-apple-system,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 24px;
+      margin: 0;
+      min-height: 56px;
+      min-width: 120px;
+      padding: 16px 20px;
       position: relative;
       text-align: center;
-      text-decoration: none;
-      transform: translate3d(0, 0, 0);
-      transition: all .3s;
       user-select: none;
       -webkit-user-select: none;
       touch-action: manipulation;
-      vertical-align: top;
-      white-space: nowrap;
+      vertical-align: baseline;
+      transition: all .2s cubic-bezier(.22, .61, .36, 1);
     }
     
-    .button-68:hover {
-      background-color: #1e8449;
-      opacity: 1;
-      transform: translateY(0);
-      transition-duration: .35s;
+    .button-66:hover {
+      background-color: #065dd8;
+      transform: translateY(-2px);
     }
     
-    .button-68:active {
-      transform: translateY(2px);
-      transition-duration: .35s;
-    }
-    
-    .button-68:hover {
-      box-shadow: rgba(39, 174, 96, .2) 0 6px 12px;
+    @media (min-width: 768px) {
+      .button-66 {
+        padding: 16px 44px;
+        min-width: 150px;
+      }
     }
     
     #navbar {
@@ -110,7 +100,7 @@ type="text/css"
 <pre id="coordinates" class="coordinates"></pre>
 
 <div id="navbar">
-    <button id='copy' class="button-68" role="button" onclick="copyToClipboard()">Click here to copy coordinates to clipboard</button>
+    <button id='copy' class="button-66" role="button" onclick="copyToClipboard()">Click here to copy coordinates to clipboard</button>
 </div>
 
 <script>
