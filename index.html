@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Create a draggable point</title>
+<title>Getting lost</title>
 <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
 <link href="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.css" rel="stylesheet">
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.js"></script>
@@ -43,91 +43,55 @@ type="text/css"
     border-radius: 3px;
     display: none;
     }
-    
+
     /* CSS */
-    .button-85 {
-      padding: 0.6em 2em;
-      border: none;
-      outline: none;
-      color: rgb(255, 255, 255);
-      background: #111;
+    .button-68 {
+      appearance: none;
+      backface-visibility: hidden;
+      background-color: #27ae60;
+      border-radius: 8px;
+      border-style: none;
+      box-shadow: rgba(39, 174, 96, .15) 0 4px 9px;
+      box-sizing: border-box;
+      color: #fff;
       cursor: pointer;
+      display: inline-block;
+      font-family: Inter,-apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: normal;
+      line-height: 1.5;
+      outline: none;
+      overflow: hidden;
+      padding: 13px 20px;
       position: relative;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 0;
-      border-radius: 10px;
+      text-align: center;
+      text-decoration: none;
+      transform: translate3d(0, 0, 0);
+      transition: all .3s;
       user-select: none;
       -webkit-user-select: none;
       touch-action: manipulation;
-      margin-bottom: 20px;
+      vertical-align: top;
+      white-space: nowrap;
     }
     
-    .button-85:before {
-      content: "";
-      background: linear-gradient(
-        45deg,
-        #ff0000,
-        #ff7300,
-        #fffb00,
-        #48ff00,
-        #00ffd5,
-        #002bff,
-        #7a00ff,
-        #ff00c8,
-        #ff0000
-      );
-      position: absolute;
-      top: -2px;
-      left: -2px;
-      background-size: 400%;
-      z-index: -1;
-      filter: blur(5px);
-      -webkit-filter: blur(5px);
-      width: calc(100% + 4px);
-      height: calc(100% + 4px);
-      animation: glowing-button-85 20s linear infinite;
-      transition: opacity 0.3s ease-in-out;
-      border-radius: 10px;
-      margin-bottom: 20px;
+    .button-68:hover {
+      background-color: #1e8449;
+      opacity: 1;
+      transform: translateY(0);
+      transition-duration: .35s;
     }
     
-    @keyframes glowing-button-85 {
-      0% {
-        background-position: 0 0;
-      }
-      50% {
-        background-position: 400% 0;
-      }
-      100% {
-        background-position: 0 0;
-      }
+    .button-68:active {
+      transform: translateY(2px);
+      transition-duration: .35s;
     }
     
-    .button-85:after {
-      z-index: -1;
-      content: "";
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: #222;
-      left: 0;
-      top: 0;
-      border-radius: 10px;
-      margin-bottom: 20px;
+    .button-68:hover {
+      box-shadow: rgba(39, 174, 96, .2) 0 6px 12px;
     }
     
-    #btn {
-        border: none;
-        margin-bottom: 20px;
-        align-items: center;
-        text-align: center;
-        text-decoration: none;
-        padding: 5px;
-        border-radius: 20%;
-        font-size: 30px;
-        cursor: pointer;
-    }
     #navbar {
         position: top;
     }
@@ -146,7 +110,7 @@ type="text/css"
 <pre id="coordinates" class="coordinates"></pre>
 
 <div id="navbar">
-    <button id='copy' class="button-85" role="button" onclick="copyToClipboard()">Click here to copy coordinates to clipboard</button>
+    <button id='copy' class="button-68" role="button" onclick="copyToClipboard()">Click here to copy coordinates to clipboard</button>
 </div>
 
 <script>
