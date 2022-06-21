@@ -44,6 +44,7 @@ type="text/css"
     display: none;
     }
 
+    /* CSS */
     .button-66 {
       background-color: #0a6bff;
       border-radius: 4px;
@@ -127,8 +128,12 @@ type="text/css"
         } // Coordinates of central London
       });
 
+
     // Add the geocoder to the map
     map.addControl(geocoder);
+
+    // Add zoom and rotation controls to the map.
+    map.addControl(new mapboxgl.NavigationControl());
     
     const canvas = map.getCanvasContainer();
     
